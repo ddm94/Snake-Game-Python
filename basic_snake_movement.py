@@ -40,30 +40,39 @@ def go_left():
         snake_direction = "left"
 
 
-def move_snake():
+def game_loop():
     stamper.clearstamps() # Remove existing stamps made by stamper.
 
     new_head = snake[-1].copy()
     new_head[0] += offsets[snake_direction][0]
     new_head[1] += offsets[snake_direction][1]
 
-    # Add new head to snake body
-    snake.append(new_head)
+    # Check collisions
+    # new_head in snake = self collisions
+    # new_head[0] < - WIDTH / 2 = X of new head is less than left-hand wall
+    # new_head[1] < - HEIGHT / 2 = Y of new head is less than bottom wall
+    # We are basically checking the boundaries of the screen
+    if new_head in snake or new_head[0] < - WIDTH / 2 or new_head[0] > WIDTH / 2 \
+    or new_head[1] < - HEIGHT / 2 or new_head[1] > HEIGHT / 2:
+        turtle.bye() # Close program
+    else:
+        # Add new head to snake body
+        snake.append(new_head)
 
-    # Remove last segment of snake.
-    snake.pop(0)
+        # Remove last segment of snake.
+        snake.pop(0)
 
-    # Draw snake for the first time.
-    for segment in snake:
-        # X = segement[0], Y = segment[1]
-        stamper.goto(segment[0], segment[1])
-        stamper.stamp()
-    
-    # Refresh screen
-    screen.update()
+        # Draw snake for the first time.
+        for segment in snake:
+            # X = segement[0], Y = segment[1]
+            stamper.goto(segment[0], segment[1])
+            stamper.stamp()
+        
+        # Refresh screen
+        screen.update()
 
-    # Rinse and repeat
-    turtle.ontimer(move_snake, DELAY)
+        # Rinse and repeat
+        turtle.ontimer(game_loop, DELAY)
 
 # Create window where we will do our drawing
 screen = turtle.Screen()
@@ -89,7 +98,7 @@ snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
 snake_direction = "up"
 
 # Set animation in motion
-move_snake()
+game_loop()
 
 # This statement (or an equivalent) is needed at the end of all your turtle programs.
 turtle.done()
