@@ -1,10 +1,12 @@
-# Import the Turtle Graphics module
+# Import the Turtle Graphics and random module
 import turtle
+import random
 
 # Define program constants
 WIDTH = 500
 HEIGHT = 500
 DELAY = 100 # Milliseconds between frame updates
+FOOD_SIZE = 10
 
 # Dictionary containing offsets which determine how much the snake moves in each direction.
 offsets = {
@@ -59,8 +61,11 @@ def game_loop():
         # Add new head to snake body
         snake.append(new_head)
 
-        # Remove last segment of snake.
-        snake.pop(0)
+        # Check food collision
+        # Keep the snake the same length unless fed
+        if not food_collision():
+            # Remove last segment of snake.
+            snake.pop(0)
 
         # Draw snake for the first time.
         for segment in snake:
@@ -73,6 +78,29 @@ def game_loop():
 
         # Rinse and repeat
         turtle.ontimer(game_loop, DELAY)
+
+def food_collision():
+    global food_pos
+    # If the food and the snake's are within 20 pixels of each other
+    if get_distance(snake[-1], food_pos) < 20:
+        food_pos = get_random_food_pos()
+        food.goto(food_pos)
+        return True
+    
+    return False
+
+def get_random_food_pos():
+    x = random.randint(-WIDTH / 2 + FOOD_SIZE, WIDTH / 2 - FOOD_SIZE)
+    y = random.randint(-HEIGHT / 2 + FOOD_SIZE, HEIGHT / 2 - FOOD_SIZE)
+    return (x, y) # return x and y as a tuple
+
+# Get distance between two points
+def get_distance(pos1, pos2):
+    x1, y1 = pos1
+    x2, y2 = pos2
+    # Pythagoras' Theorem
+    distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5 # ** 0.5 is the same as taking the square root
+    return distance
 
 # Create window where we will do our drawing
 screen = turtle.Screen()
@@ -96,6 +124,15 @@ stamper.penup()
 # Create snake as a list of coordinate pairs
 snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
 snake_direction = "up"
+
+# Food
+food = turtle.Turtle()
+food.shape("circle")
+food.color("red")
+food.shapesize(FOOD_SIZE / 20)
+food.penup()
+food_pos = get_random_food_pos()
+food.goto(food_pos)
 
 # Set animation in motion
 game_loop()
