@@ -16,30 +16,30 @@ offsets = {
     "right": (20, 0)
 }
 
-def go_up():
+def bind_direction_keys():
+    screen.onkey(lambda: set_snake_direction("up"), "Up")
+    screen.onkey(lambda: set_snake_direction("down"), "Down")
+    screen.onkey(lambda: set_snake_direction("left"), "Left")
+    screen.onkey(lambda: set_snake_direction("right"), "Right")
+
+def set_snake_direction(direction):
     global snake_direction
 
-    # Move up only if we are not already moving down
-    if snake_direction != "down":
-        snake_direction = "up"
+    if direction == "up":
+        if snake_direction != "down": # No self-collision simply by pressing wrong key/
+            snake_direction = "up"
 
-def go_right():
-    global snake_direction
+    elif direction == "down":
+        if snake_direction != "up": # No self-collision simply by pressing wrong key/
+            snake_direction = "down"
 
-    if snake_direction != "left":
-        snake_direction = "right"
+    elif direction == "left":
+        if snake_direction != "right": # No self-collision simply by pressing wrong key/
+            snake_direction = "left"
 
-def go_down():
-    global snake_direction
-
-    if snake_direction != "up":
-        snake_direction = "down"
-
-def go_left():
-    global snake_direction
-
-    if snake_direction != "right":
-        snake_direction = "left"
+    elif direction == "right":
+        if snake_direction != "left": # No self-collision simply by pressing wrong key/
+            snake_direction = "right"
 
 
 def game_loop():
@@ -126,11 +126,8 @@ screen.tracer(0) # Disable automatic animation
 
 # Event handlers
 screen.listen()
-# Callbacks for key press events
-screen.onkey(go_up, "Up")
-screen.onkey(go_right, "Right")
-screen.onkey(go_down, "Down")
-screen.onkey(go_left, "Left")
+# Callback for key press events
+bind_direction_keys()
 
 stamper = turtle.Turtle()
 stamper.shape("square")
