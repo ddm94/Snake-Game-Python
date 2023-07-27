@@ -56,7 +56,7 @@ def game_loop():
     # We are basically checking the boundaries of the screen
     if new_head in snake or new_head[0] < - WIDTH / 2 or new_head[0] > WIDTH / 2 \
     or new_head[1] < - HEIGHT / 2 or new_head[1] > HEIGHT / 2:
-        turtle.bye() # Close program
+        game_init() # Restart game
     else:
         # Add new head to snake body
         snake.append(new_head)
@@ -104,6 +104,19 @@ def get_distance(pos1, pos2):
     distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5 # ** 0.5 is the same as taking the square root
     return distance
 
+def game_init():
+    global score, snake, snake_direction, food_pos
+
+    score = 0
+    # Create snake as a list of coordinate pairs
+    snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
+    snake_direction = "up"
+
+    food_pos = get_random_food_pos()
+    food.goto(food_pos)
+
+    game_loop()
+
 # Create window where we will do our drawing
 screen = turtle.Screen()
 screen.setup(WIDTH, HEIGHT) # Set the dimension of the Turtle Graphics window.
@@ -123,22 +136,15 @@ stamper = turtle.Turtle()
 stamper.shape("square")
 stamper.penup()
 
-# Create snake as a list of coordinate pairs
-snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
-snake_direction = "up"
-score = 0
-
 # Food
 food = turtle.Turtle()
 food.shape("circle")
 food.color("red")
 food.shapesize(FOOD_SIZE / 20)
 food.penup()
-food_pos = get_random_food_pos()
-food.goto(food_pos)
 
 # Set animation in motion
-game_loop()
+game_init()
 
 # This statement (or an equivalent) is needed at the end of all your turtle programs.
 turtle.done()
