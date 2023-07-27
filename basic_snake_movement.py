@@ -3,10 +3,10 @@ import turtle
 import random
 
 # Define program constants
-WIDTH = 500
-HEIGHT = 500
-DELAY = 100 # Milliseconds between frame updates
-FOOD_SIZE = 10
+WIDTH = 800
+HEIGHT = 600
+MAX_DELAY = 50
+FOOD_SIZE = 20
 
 # Dictionary containing offsets which determine how much the snake moves in each direction.
 offsets = {
@@ -78,13 +78,14 @@ def game_loop():
         screen.update()
 
         # Rinse and repeat
-        turtle.ontimer(game_loop, DELAY)
+        turtle.ontimer(game_loop, delay)
 
 def food_collision():
     global food_pos, score
     # If the food and the snake's are within 20 pixels of each other
     if get_distance(snake[-1], food_pos) < 20:
         score += 1
+        increment_speed()
         food_pos = get_random_food_pos()
         food.goto(food_pos)
         return True
@@ -104,10 +105,18 @@ def get_distance(pos1, pos2):
     distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5 # ** 0.5 is the same as taking the square root
     return distance
 
+def increment_speed():
+    global delay
+    if delay > MAX_DELAY:
+        delay -= 10
+    
+    #print(delay)
+
 def game_init():
-    global score, snake, snake_direction, food_pos
+    global score, snake, snake_direction, delay, food_pos
 
     score = 0
+    delay = 200
     # Create snake as a list of coordinate pairs
     snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
     snake_direction = "up"
@@ -129,8 +138,10 @@ screen.listen()
 # Callback for key press events
 bind_direction_keys()
 
+# Snake
 stamper = turtle.Turtle()
-stamper.shape("square")
+stamper.shape("circle")
+stamper.color("green")
 stamper.penup()
 
 # Food
